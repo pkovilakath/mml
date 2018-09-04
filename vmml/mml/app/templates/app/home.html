@@ -1,2 +1,148 @@
 
 {%  extends "base.html" %}
+
+{% block topcontent %}
+
+    <!-- Main jumbotron for a primary marketing message or call to action -->
+    <div class="jumbotron">
+      <div class="container">
+        <h1>Solve Multiple Classification Problems</h1>
+        <p>Solve Classification problems with multiple strategies by selecting a training file and setting appropriate initial properties for the various algorithms.</p>
+{#        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>#}
+{#          <form id="dropFileForm" action="http://localhost/upload.php" method="post" onsubmit="uploadFiles(event)">#}
+           <form id="dropFileForm" method="post" enctype="multipart/form-data">
+               {% csrf_token %}
+              <input type="file" name="file" >
+
+              <input type="submit" value="Upload">
+          </form>
+     </div>
+    </div>
+{%  endblock  %}
+
+{% block stylecontent %}
+    #dropFileForm {
+      margin: 16px;
+      text-align: center;
+      border-radius: 8px;
+      overflow: hidden;
+      transition: 0.5s;
+    }
+
+    #dropFileForm #fileLabel {
+      background-color: rgba(0, 255, 0, 0.5);
+      display: block;
+      padding: 16px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    #dropFileForm #fileInput {
+      display: none;
+    }
+
+    #dropFileForm #fileLabel:after,
+    #dropFileForm #fileLabel:before {
+      position: absolute;
+      content: "";
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      z-index: -2;
+      border-radius: 8px 8px 0 0;
+    }
+
+    #dropFileForm #fileLabel:before {
+      z-index: -1;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 5%,
+        black 5%,
+        black 10%
+      );
+      opacity: 0;
+      transition: 0.5s;
+    }
+
+    #dropFileForm.fileHover #fileLabel:before {
+      opacity: 0.25;
+    }
+
+    #dropFileForm .uploadButton {
+      border: 0;
+      outline: 0;
+      width: 100%;
+      padding: 8px;
+      background-color: limeGreen;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    #dropFileForm.fileHover {
+      box-shadow: 0 0 16px limeGreen;
+    }
+{%  endblock %}
+
+{% block scriptcontent %}
+    var dropFileForm = document.getElementById("dropFileForm");
+    var fileLabelText = document.getElementById("fileLabelText");
+    var uploadStatus = document.getElementById("uploadStatus");
+    var fileInput = document.getElementById("fileInput");
+    var droppedFiles;
+
+    function overrideDefault(event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    function fileHover() {
+      dropFileForm.classList.add("fileHover");
+    }
+
+    function fileHoverEnd() {
+      dropFileForm.classList.remove("fileHover");
+    }
+
+    function addFiles(event) {
+      droppedFiles = event.target.files || event.dataTransfer.files;
+      showFiles(droppedFiles);
+    }
+
+    function showFiles(files) {
+      if (files.length > 1) {
+        fileLabelText.innerText = files.length + " files selected";
+      } else {
+        fileLabelText.innerText = files[0].name;
+      }
+    }
+
+    function uploadFiles(event) {
+      event.preventDefault();
+      changeStatus("Uploading...");
+
+
+      var formData = new FormData();
+
+      for (var i = 0, file; (file = droppedFiles[i]); i++) {
+        formData.append(fileInput.name, file, file.name);
+      }
+      $('#hidden').val(droppedFiles[0]);
+      document.getElementById("dropFileForm").submit();
+
+{#      var xhr = new XMLHttpRequest();#}
+{#      xhr.onreadystatechange = function(data) {#}
+{#        //handle server response and change status of#}
+{#        //upload process via changeStatus(text)#}
+{#        console.log(xhr.response);#}
+{#      };#}
+{#      xhr.open(dropFileForm.method, dropFileForm.action, true);#}
+{#      xhr.send(formData);#}
+    }
+
+    function changeStatus(text) {
+      uploadStatus.innerText = text;
+    }
+ {%  endblock %}

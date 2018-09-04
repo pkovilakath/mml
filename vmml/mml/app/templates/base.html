@@ -19,7 +19,8 @@
         </style>
         <link rel="stylesheet" href="{%  static 'css/bootstrap-theme.min.css' %}">
         <link rel="stylesheet" href="{%  static 'css/main.css' %}">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">
+{#        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">#}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
         <script src="{%  static 'js/vendor/modernizr-2.8.3-respond-1.4.2.min.js'%}"></script>
     </head>
@@ -49,39 +50,8 @@
       </div>
     </nav>
 
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron">
-      <div class="container">
-        <h1>Solve Multiple Classification Problems</h1>
-        <p>Solve Classification problems with multiple strategies by selecting a training file and setting appropriate initial properties for the various algorithms.</p>
-{#        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>#}
-             <div class="box">
-                <form method="post" enctype="multipart/form-data">
-                    <div class="field has-addons">
-                        <div class="file is-info has-name is-fullwidth">
-                            <label class="file-label">
-                                <input id="file-upload-train" class="file-input" type="file" name="resume">
-                                <span class="file-cta">
-                                    <span class="file-icon">
-                                        <i class="fas fa-upload"></i>
-                                    </span>
-                                    <span class="file-label">
-                                        Choose a Training file…
-                                    </span>
-                                </span>
-                                <span class="file-name">
-                                    <label id="file-name-train">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                                </span>
-                            </label>
-                        </div>
-                        <div class="control">
-                            <input id='button-train' type="submit" class="button is-info" disabled value="Start Training">
-                        </div>
-                    </div>
-                </form>
-            </div>
-     </div>
-    </div>
+    {% block topcontent %}
+    {% endblock %}
 
     <div class="container">
       <!-- Example row of columns -->
@@ -106,13 +76,22 @@
       <hr>
 
       <footer>
-        <p>&copy; Company {{ year }}</p>
+        <p>&copy; ptk 1905-{{ year }}</p>
       </footer>
-    </div> <!-- /container -->        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="{% static 'js/vendor/jquery-1.11.2.min.js' %}"><\/script>')</script>
+    </div> <!-- /container -->
 
-        <script src="{%  static 'js/vendor/bootstrap.min.js' %}"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="{% static 'js/vendor/jquery-1.11.2.min.js' %}"><\/script>')</script>
+    <script src="{%  static 'js/vendor/bootstrap.min.js' %}"></script>
+    <script src="{%  static 'js/main.js' %}"></script>
 
-        <script src="{%  static 'js/main.js' %}"></script>
+    <script>
+        {% block scriptcontent %}
+        {%  endblock %}
+    </script>
+    <style>
+        {% block stylecontent %}
+        {%  endblock %}
+    </style>
     </body>
 </html>
