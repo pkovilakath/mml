@@ -1,4 +1,4 @@
-#!/Users/kovilakp/dev/mml/vmml/bin/python3
+#!/Users/kovilakp/dev/mml/vmml/bin/python3.7
 from django.core import management
 
 if __name__ == "__main__":
