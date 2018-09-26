@@ -43,10 +43,7 @@
         <link rel="stylesheet" href="{%  static 'css/bootstrap-theme.min.css' %}">
         <link rel="stylesheet" href="{%  static 'css/main.css' %}">
 {#        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css">#}
-<<<<<<< HEAD
-=======
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
->>>>>>> c3533868339e2f3d69144589178c896c866dd671
+{#        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">#}
 
         <script src="{%  static 'js/vendor/modernizr-2.8.3-respond-1.4.2.min.js'%}"></script>
     </head>
@@ -76,13 +73,11 @@
       </div>
     </nav>
 
-<<<<<<< HEAD
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron">
       <div class="container">
         <h1>Compare Multiple AI Classification Algorithms</h1>
         <p>Compare multiple classification problems and select the best AI solution for your data.  Select a training file and set the appropriate initial conditions easily to get going. </p>
-{#        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>#}
              <div class="box">
                 <form method="post" enctype="multipart/form-data">
                     <div class="field has-addons">
@@ -91,24 +86,32 @@
                             <button class="btn btn-default">Upload a Training file</button>
                             <input id="image_file" type="file" name="train" class="file-input" />
                         </div>
-                        <p id="file_name" style="font-size:small; margin:0; padding:0; margin-bottom:20px;">No Training file selected</p>
+                        <p id="file_name" style="font-size:small; margin:0; font-size:small; margin-top:10px; ">No Training file selected</p>
 
-{#                       <div class="file is-info has-name is-fullwidth">#}
-{#                            <label class="file-label">#}
-{#                                <input id="file-upload-train" class="file-input" type="file" name="resume">#}
-{#                                <span class="file-cta">#}
-{#                                    <span class="file-icon">#}
-{#                                        <i class="fas fa-upload"></i>#}
-{#                                    </span>#}
-{#                                    <span class="file-label">#}
-{#                                        Choose a Training file…#}
-{#                                    </span>#}
-{#                                </span>#}
-{#                                <span class="file-name">#}
-{#                                    <label id="file-name-train">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>#}
-{#                                </span>#}
-{#                            </label>#}
-{#                        </div>#}
+                        <div class="btn btn-default" style="margin:0; padding:0;">
+                            <label>File Type</label>
+
+                            <div style="text-align: left;">
+                                <input type="checkbox" id="csv" name="feature"
+                                       value="csv"  />
+                                <label for="csv">csv</label>
+                           </div>
+
+                            <div style="text-align: left;">
+                                <input type="checkbox" id="json" name="feature"
+                                       value="json" />
+                                <label for="json">json</label>
+                            </div>
+
+                            <div style="text-align: left;">
+                                <input type="checkbox" id="text" name="feature"
+                                       value="text" />
+                                <label for="text">text</label>
+                            </div>
+
+                        </div>
+
+
 
                         <div class="control">
                             <input id='button-train' type="submit" class="btn button is-info" disabled value="Start Training">
@@ -118,10 +121,9 @@
             </div>
      </div>
     </div>
-=======
-    {% block topcontent %}
-    {% endblock %}
->>>>>>> c3533868339e2f3d69144589178c896c866dd671
+
+{#    {% block topcontent %}#}
+{#    {% endblock %}#}
 
     <div class="container">
       <!-- Example row of columns -->
@@ -155,7 +157,6 @@
     <script src="{%  static 'js/vendor/bootstrap.min.js' %}"></script>
     <script src="{%  static 'js/main.js' %}"></script>
 
-<<<<<<< HEAD
         <script src="{%  static 'js/main.js' %}"></script>
 
         <script>
@@ -166,7 +167,6 @@
                 });
             });
         </script>
-=======
     <script>
         {% block scriptcontent %}
         {%  endblock %}
@@ -175,6 +175,5 @@
         {% block stylecontent %}
         {%  endblock %}
     </style>
->>>>>>> c3533868339e2f3d69144589178c896c866dd671
     </body>
 </html>
