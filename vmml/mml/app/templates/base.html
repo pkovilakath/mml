@@ -40,8 +40,11 @@
             top: 0;
             opacity: 0;
         }
-        table td {
+        .cellpadding td, th {padding:5px; padding-right:10px}
+
+        table, td, th {
             padding: 10px;
+            border: 1px solid lightgray;
         }
         label {
             font-weight: 400;
@@ -149,7 +152,7 @@
                             <table cellspacing="2" cellpadding="2">
                                 <tr><td>
                                     <div class="btn btn-default" style="width:460px; padding:0; margin:0; font-size:medium;text-align:left;">
-                                        <table cellspacing="2" cellpadding="2">
+                                        <table cellspacing="10" cellpadding="10">
                                             <tr><td>
                                                 <div>
                                                     <label style="text-align:left; padding-left:10px; text-decoration: underline;">Classifiers</label>
@@ -189,7 +192,7 @@
 
                                                 <div style="text-align: left; padding-left:10px;">
                                                     <input type="checkbox" checked id="ab" name="classifier" value="ab"/>
-                                                    <label>AdaBoost</label>
+                                                    <label>Ada Boost</label>
                                                 </div>
 
                                                 <div style="text-align: left; padding-left:10px;">
@@ -241,16 +244,23 @@
 <div class="container">
     <!-- Example row of columns -->
     <div class="row">
-        <div class="col-md-6">
-            <h2>Efficacy</h2>
-            <p>Once the Training is complete, Results will be displayed here. </p>
-            <p><a class="btn btn-default" href="#" role="button">More details &raquo;</a></p>
-        </div>
-        <div class="col-md-6">
-            <h2>Time Taken</h2>
-            <p>Once the Training is complete, Results will be displayed here. </p>
-            <p><a class="btn btn-default" href="#" role="button">More details &raquo;</a></p>
-        </div>
+        <div class="col-md-12">
+            <h2>Efficacy & Computation Time</h2>
+                {% for eff in effs %}
+                        <p> {{ eff | safe }}
+                {%  endfor %}
+{#                <p><a class="btn btn-default" href="#" role="button">More details &raquo;</a></p> #}
+         </div>
+{#        <div class="col-md-6">#}
+{#            <h2>Time Taken</h2>#}
+{#            <div id="dTime">#}
+{#                {% for tt in tts %}#}
+{#                    {{ tt | safe }}#}
+{#                {%  endfor %}#}
+{#                <p><a class="btn btn-default" href="#" role="button">More details &raquo;</a></p>#}
+{#            </div>#}
+{#        </div> #}
+
 {#        <div class="col-md-4">#}
 {#            <h2>Heading</h2>#}
 {#            <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula#}
