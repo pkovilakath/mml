@@ -19,9 +19,14 @@ from django.conf.urls import url, include
 
 from .views import welcome
 
+import app
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^app/', include('app.urls')),
+    url(r'^learn', app.views.learn),
+    url(r'^saveModel', app.views.saveModel),
+    url(r'^predict', app.views.predict),
     url(r'^$', welcome)
 
 ]

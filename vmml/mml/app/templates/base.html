@@ -139,11 +139,11 @@
                                 <tr><td colspan="2">
                                     <div  style="text-align: left; padding-left:10px;">
                                         <label>Number of features in each tuple of the Training File</label>
-                                        <input name="totFeatures" type="number" value="0">
+                                        <input name="totFeatures" type="number" value="{{ totFeatures }}">
                                     </div>
                                     <div  style="text-align: left; padding-left:10px;">
                                         <label>Element number of classification (0 based) in each tuple</label>
-                                        <input name="numClassification" type="number" value="0">
+                                        <input name="numClassification" type="number" value="{{ numClassification }}">
                                     </div>
                                 </td></tr>
                             </table>
@@ -246,6 +246,7 @@
     <div class="row">
         <div class="col-md-12">
             <h2>Efficacy & Computation Time</h2>
+            {{ fileName }}
                 {% for eff in effs %}
                         <p> {{ eff | safe }}
                 {%  endfor %}
@@ -298,6 +299,31 @@
             }
         });
     });
+
+    function save_model(mn,fileName,totFeatures,numClassification) {
+        $("body").css("cursor", "wait");
+        $.ajax({
+            method: "POST",
+            url: 'saveModel',
+            data: {
+                'mn': mn,
+                'fileName': fileName,
+                'totFeatures':totFeatures,
+                'numClassification':numClassification,
+                 csrfmiddlewaretoken: '{{ csrf_token }}'
+            }
+        })
+        .success(function (data) {
+            alert("It be done.");
+        })
+        .error(function (data) {
+            alert("Unable to save model");
+        })
+        .complete(function (data) {
+            $("body").css("cursor", "default");
+        });
+    }
+
 </script>
 <script>
     {% block scriptcontent %}

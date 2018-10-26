@@ -1,24 +1,6 @@
 
 {%  extends "base.html" %}
 
-{% block topcontent %}
-
-    <!-- Main jumbotron for a primary marketing message or call to action -->
-    <div class="jumbotron">
-      <div class="container">
-        <h1>Solve Multiple Classification Problems</h1>
-        <p>Solve Classification problems with multiple strategies by selecting a training file and setting appropriate initial properties for the various algorithms.</p>
-{#        <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>#}
-{#          <form id="dropFileForm" action="http://localhost/upload.php" method="post" onsubmit="uploadFiles(event)">#}
-           <form id="dropFileForm" method="post" enctype="multipart/form-data">
-               {% csrf_token %}
-              <input type="file" name="file" >
-
-              <input type="submit" value="Upload">
-          </form>
-     </div>
-    </div>
-{%  endblock  %}
 
 {% block stylecontent %}
     #dropFileForm {
