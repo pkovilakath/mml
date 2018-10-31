@@ -20,6 +20,7 @@ from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from django.http import JsonResponse
 import pickle
 
+CONST_UPLOAD_DIR = "upload"
 
 classifiers = [
     ('kn', KNeighborsClassifier(3), 'K Neighbors'),
@@ -34,8 +35,30 @@ classifiers = [
     ('qda', QuadraticDiscriminantAnalysis(), 'Quadratic Discriminant Analysis')]
 
 def predict(request):
-    return render(request, "app/predict.html"
-                  )
+    savedModels=[]
+    for file in os.listdir(CONST_UPLOAD_DIR):
+        if file.endswith(".model"):
+            fileN=os.path.splitext(file)[0]
+            elements=fileN.split('^')
+            savedModels.append(elements)
+            # data_html=data.to_html()
+
+    effs = "No Models saved."
+    if len(savedModels) > 0:
+            #set up display
+            effs="<table class='cellpadding'><tr><th>Name</th><th>Model</th><th>Training File</th><th>Efficacy (%)</th><th>Time (ms)</th><th># of Features</th><th>Use</th></tr>"
+            for r in savedModels:
+                effs+="<tr><td>"+r[0]+"</td><td>"+r[1]+"</td><td>"+r[2]+"</td><td style='text-align:right;'>"+r[3]+"</td><td style='text-align:right;'>"+r[4]+"</td><td style='text-align:right;'>"+r[5]+"</td><td><input type='radio' id='"+r[0]+r[1]+r[2]+"' name='model' value='Select'/></td></tr>"
+            effs+="</table>"
+
+    return render(request, "app/predict.html",
+                  {
+                      'mainTitle': 'ML - Classification ',
+                      'year': datetime.now().year,
+                      'effs': effs,
+                  })
+
+
 
 def saveModel(request):
     rData={'msg':'Error','mn':'none'}
@@ -67,7 +90,7 @@ def saveModel(request):
                 classifier.fit(X,Y)
                 import re
                 userfn=re.sub('[!^$]', '-', userfn)
-                savename=mkFullPath(userfn+'^'+mn+'^'+fileName+'^'+ef+'^'+ti+'.model')
+                savename=mkFullPath(userfn+'^'+mn+'^'+fileName+'^'+ef+'^'+ti+'^'+str(totFeatures)+'.model')
                 pickle.dump(classifier, open(savename, 'wb'))
 
     return JsonResponse(rData)
@@ -175,8 +198,8 @@ def ttSortFunc(e):
     return(e[5])
 
 def handle_uploaded_file(file, filename):
-    if not os.path.exists('upload/'):
-        os.mkdir('upload/')
+    if not os.path.exists(CONST_UPLOAD_DIR+'/'):
+        os.mkdir(CONST_UPLOAD_DIR+'/')
     fn = mkFullPath(filename)
     with open(fn, 'wb+') as destination:
         for chunk in file.chunks():
@@ -184,4 +207,4 @@ def handle_uploaded_file(file, filename):
     return fn
 
 def mkFullPath(filename):
-    return 'upload/' + filename
+    return CONST_UPLOAD_DIR+'/' + filename

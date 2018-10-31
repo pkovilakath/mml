@@ -12,134 +12,62 @@
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="field has-addons" style="background: rgba(0,0,0,.1);">
-                    <table cellspacing="2" cellpadding="2">
-                        <tr><td width="50%">
-                            <table cellspacing="2" cellpadding="2">
-                                <tr>
-                                    <td>
-                                        <div class="upload-btn-wrapper">
-                                            <button class="btn btn-default" stye="width:240px;">Upload a Training file</button>
-                                            <input id="training_file" type="file" name="training_file" class="file-input"/>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span id="file_name" style="font-size:small;">No Training file selected</span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <div class="btn btn-default" style="width:240px; padding:0; margin:0; font-size:medium;text-align:left;">
-                                            <label style="text-align:left; padding-left:10px; text-decoration:underline;">File Type</label>
+                     <table cellspacing="2" cellpadding="2">
+                        <tr>
+                            <td>
+                                <div class="upload-btn-wrapper">
+                                    <button class="btn btn-default" stye="width:240px;">Upload a Test file</button>
+                                    <input id="Test_file" type="file" name="Test_file" class="file-input"/>
+                                </div>
+                            </td>
+                            <td>
+                                <span id="file_name" style="font-size:small;">No Test file selected</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="btn btn-default" style="width:240px; padding:0; margin:0; font-size:medium;text-align:left;">
+                                    <label style="text-align:left; padding-left:10px; text-decoration:underline;">File Type</label>
 
-                                            <div style="text-align: left; padding-left:10px;">
-                                                <input type="radio" id="csv" name="fileType"
-                                                       value="csv"/>
-                                                <label style="">csv</label>
-                                            </div>
-
-                                            <div style="text-align: left; padding-left:10px;">
-                                                <input type="radio" id="json" name="fileType"
-                                                       value="json"/>
-                                                <label >json</label>
-                                            </div>
-
-                                            <div style="text-align: left; padding-left:10px;">
-                                                <input type="radio" id="txt" name="fileType"
-                                                       value="text"/>
-                                                <label >text</label>
-                                            </div>
-
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr><td colspan="2">
-                                    <div  style="text-align: left; padding-left:10px;">
-                                        <label>Number of features in each tuple of the Training File</label>
-                                        <input name="totFeatures" type="number" value="{{ totFeatures }}">
+                                    <div style="text-align: left; padding-left:10px;">
+                                        <input type="radio" id="csv" name="fileType"
+                                               value="csv"/>
+                                        <label style="">csv</label>
                                     </div>
-                                    <div  style="text-align: left; padding-left:10px;">
-                                        <label>Element number of classification (0 based) in each tuple</label>
-                                        <input name="numClassification" type="number" value="{{ numClassification }}">
+
+                                    <div style="text-align: left; padding-left:10px;">
+                                        <input type="radio" id="json" name="fileType"
+                                               value="json"/>
+                                        <label >json</label>
                                     </div>
-                                </td></tr>
-                            </table>
-                        </td>
-                        <td>
-                            <table cellspacing="2" cellpadding="2">
-                                <tr><td>
-                                    <div class="btn btn-default" style="width:460px; padding:0; margin:0; font-size:medium;text-align:left;">
-                                        <table cellspacing="10" cellpadding="10">
-                                            <tr><td>
-                                                <div>
-                                                    <label style="text-align:left; padding-left:10px; text-decoration: underline;">Classifiers</label>
-                                                </div>
 
-                                                <div style="text-align: left; padding-left:10px;">
-{#                                                    <input type="checkbox" checked id="gnb" name="classifier" value="gnb"/>#}
-{#                                                    <label>Naive Bayes</label>#}
-                                                      <label></label>
-                                                </div>
-
-                                                <div style="text-align: left; padding-left:10px;">
-                                                    <input type="checkbox" checked id="svc" name="classifier" value="svc"/>
-                                                    <label>Support Vector</label>
-                                                </div>
-
-                                                <div style="text-align: left; padding-left:10px;">
-                                                    <input type="checkbox" checked id="nusvc" name="classifier" value="nusvc"/>
-                                                    <label>Nu-Support Vector</label>
-                                                </div>
-
-                                                <div style="text-align: left; padding-left:10px;">
-                                                    <input type="checkbox" checked id="kn" name="classifier" value="kn"/>
-                                                    <label>K-Neighbors</label>
-                                                </div>
-
-                                                <div style="text-align: left; padding-left:10px;">
-                                                    <input type="checkbox" checked id="dt" name="classifier" value="dt"/>
-                                                    <label>Decision Tree</label>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div style="text-align: left; padding-left:10px;">
-                                                    <input type="checkbox" checked id="rf" name="classifier" value="rf"/>
-                                                    <label>Random Forest</label>
-                                                </div>
-
-                                                <div style="text-align: left; padding-left:10px;">
-                                                    <input type="checkbox" checked id="ab" name="classifier" value="ab"/>
-                                                    <label>Ada Boost</label>
-                                                </div>
-
-                                                <div style="text-align: left; padding-left:10px;">
-                                                    <input type="checkbox" checked id="gb" name="classifier" value="gb"/>
-                                                    <label>Gradient Boosting</label>
-                                                </div>
-
-                                                <div style="text-align: left; padding-left:10px;">
-                                                    <input type="checkbox" checked id="gn" name="classifier" value="gn"/>
-                                                    <label>Gaussian NB</label>
-                                                </div>
-
-                                                <div style="text-align: left; padding-left:10px;">
-                                                    <input type="checkbox" checked id="lda" name="classifier" value="lda"/>
-                                                    <label>Linear Discriminant Analysis</label>
-                                                </div>
-
-                                                <div style="text-align: left; padding-left:10px;">
-                                                    <input type="checkbox" checked id="qda" name="classifier" value="qda"/>
-                                                    <label>Quadratic Discriminant Analysis</label>
-                                                </div>
-                                            </td></tr>
-                                        </table>
+                                    <div style="text-align: left; padding-left:10px;">
+                                        <input type="radio" id="txt" name="fileType"
+                                               value="text"/>
+                                        <label >text</label>
                                     </div>
-                                </td></tr>
-                            </table>
+
+                                </div>
+                            </td>
+                        </tr>
+                        <tr><td colspan="2">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <b>Select a Saved Model</b>
+                                    <div id="theList" class="btn" style="width:90%;height:200px;overflow:scroll;"/>
+                             {#                <p><a class="btn btn-default" href="#" role="button">More details &raquo;</a></p> #}
+                                 </div>
+                            </div>
+                       <tr><td colspan="2">
+                            <div  style="text-align: left; padding-left:10px;">
+                                <label>Number of features in each tuple of the Test File</label>
+                                <input disabled=true "totFeatures" type="number" value="{{ totFeatures }}">
+                            </div>
                         </td></tr>
                     </table>
                 </div>
                     <div class="control" style="margin-bottom:10px;">
-                        <input id='button-train' type="submit" class="btn btn-default" value="Start Training" style="margin-top:15px;" disabled>
+                        <input id='button-train' type="submit" class="btn btn-default" value="Start Prediction" style="margin-top:15px;" disabled>
                     </div>
                     {% for message in messages %}
                         <div class="alert alert-warning" style="margin-top:10px; margin-bottom:10px;"">
@@ -156,35 +84,6 @@
 {%  endblock %}
 
 {%  block middlecontent %}
-<div class="container">
-    <!-- Example row of columns -->
-    <div class="row">
-        <div class="col-md-12">
-            <h2>Efficacy & Computation Time</h2>
-            {{ fileName }}
-                {% for eff in effs %}
-                        <p> {{ eff | safe }}
-                {%  endfor %}
-{#                <p><a class="btn btn-default" href="#" role="button">More details &raquo;</a></p> #}
-         </div>
-{#        <div class="col-md-6">#}
-{#            <h2>Time Taken</h2>#}
-{#            <div id="dTime">#}
-{#                {% for tt in tts %}#}
-{#                    {{ tt | safe }}#}
-{#                {%  endfor %}#}
-{#                <p><a class="btn btn-default" href="#" role="button">More details &raquo;</a></p>#}
-{#            </div>#}
-{#        </div> #}
-
-{#        <div class="col-md-4">#}
-{#            <h2>Heading</h2>#}
-{#            <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula#}
-{#                porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut#}
-{#                fermentum massa justo sit amet risus.</p>#}
-{#            <p><a class="btn btn-default" href="#" role="button">More details &raquo;</a></p>#}
-{#        </div>#}
-    </div>
 {%  endblock %}
 
 
@@ -253,11 +152,20 @@
     #dropFileForm.fileHover {
       box-shadow: 0 0 16px limeGreen;
     }
+
+    #theList table, #theList th, #theList td {
+        background-color: #f1f1f1;
+    }
 </style>
 {%  endblock %}
 
 {% block scriptcontent %}
 <script>
+    $(document).ready(function () {
+        var decoded = $("<div/>").html("{{ effs }}").text();
+        $('#theList').html(decoded);
+
+    });
 </script>
 {%  endblock %}
 
