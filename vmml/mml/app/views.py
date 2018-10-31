@@ -43,8 +43,11 @@ def saveModel(request):
     numClassification=int(request.POST['numClassification'])
     mn=request.POST['mn']
     fileName=request.POST['fileName']
+    userfn=request.POST["userfn"]
+    ef=request.POST["ef"]
+    ti=request.POST["ti"]
     classifier=()
-    if request.method == "POST" and len(mn)>0 and len(fileName)>0 and totFeatures>0 and numClassification>0:
+    if request.method == "POST" and len(userfn)>0 and len(mn)>0 and len(fileName)>0 and totFeatures>0 and numClassification>0:
         doIt = True
         if doIt:
             fileName=fileName
@@ -62,7 +65,9 @@ def saveModel(request):
             if classifier != ():
                 seed = 11
                 classifier.fit(X,Y)
-                savename=mkFullPath(mn+'['+fileName+'].model')
+                import re
+                userfn=re.sub('[!^$]', '-', userfn)
+                savename=mkFullPath(userfn+'^'+mn+'^'+fileName+'^'+ef+'^'+ti+'.model')
                 pickle.dump(classifier, open(savename, 'wb'))
 
     return JsonResponse(rData)
@@ -136,7 +141,9 @@ def learn(request):
             #set up display
             effs=["<table class='cellpadding'><tr><th>Model</th><th>Efficacy (%)</th><th>Time (ms)</th><th></th></tr>"]
             for r in results_eff:
-                effs.append("<tr><td>"+r[2]+"</td><td style='text-align:right;'>"+'{0:9.2f}'.format(r[3]*100)+"</td><td style='text-align:right;'>"+'{0:9.2f}'.format(r[5]*1000)+"</td><td><button onclick='save_model("+'"'+r[2]+'","'+fileName+'",'+str(totFeatures)+','+str(numClassification)+')'+"' style='border-radius: 5px;'>Save Model</button></td></tr>")
+                ef='{0:9.2f}'.format(r[3]*100)
+                ti='{0:9.2f}'.format(r[5]*1000)
+                effs.append("<tr><td>"+r[2]+"</td><td style='text-align:right;'>"+ef+"</td><td style='text-align:right;'>"+ti+"</td><td><button onclick='save_model("+'"'+r[2]+'","'+fileName+'",'+str(totFeatures)+','+str(numClassification)+',"'+ef.strip()+'","'+ti.strip()+'")'+"' style='border-radius: 5px;'>Save Model</button></td></tr>")
             effs.append("</table>")
 
             # # boxplot algorithm comparison
