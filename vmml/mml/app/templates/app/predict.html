@@ -17,7 +17,7 @@
                             <td>
                                 <div class="upload-btn-wrapper">
                                     <button class="btn btn-default" stye="width:240px;">Upload a Test file</button>
-                                    <input id="Test_file" type="file" name="Test_file" class="file-input"/>
+                                    <input id="test_file" type="file" name="test_file" class="file-input"/>
                                 </div>
                             </td>
                             <td>
@@ -54,14 +54,14 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <b>Select a Saved Model</b>
-                                    <div id="theList" class="btn" style="width:90%;height:200px;overflow:scroll;"/>
+                                    <div id="theList" class="btn" style="width:90%;height:200px;overflow:scroll; font-size:16px;"/>
                              {#                <p><a class="btn btn-default" href="#" role="button">More details &raquo;</a></p> #}
                                  </div>
                             </div>
                        <tr><td colspan="2">
                             <div  style="text-align: left; padding-left:10px;">
                                 <label>Number of features in each tuple of the Test File</label>
-                                <input disabled=true "totFeatures" type="number" value="{{ totFeatures }}">
+                                <input readonly name="totFeatures" id="totFeatures" type="number" value="{{ totFeatures }}">
                             </div>
                         </td></tr>
                     </table>
@@ -165,7 +165,22 @@
         var decoded = $("<div/>").html("{{ effs }}").text();
         $('#theList').html(decoded);
 
+        $('#test_file').change(function () {
+            var filename = $('#test_file').val();
+            $('#file_name').html(filename.substr(filename.lastIndexOf('\\') + 1));
+            var ftype=filename.substr(filename.lastIndexOf('.') + 1);
+            if(ftype=='csv' || ftype=='json'  || ftype=='txt') {
+                $('#' + ftype).prop("checked", true);
+                $('#button-train').prop('disabled', false);
+            } else {
+                $('#button-train').prop('disabled', !$("input[name='fileType']:checked").val());
+            }
+        });
     });
+
+    function updateNumFeatures(num) {
+        $('#totFeatures').val(num);
+    }
 </script>
 {%  endblock %}
 

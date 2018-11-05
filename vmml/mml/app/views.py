@@ -35,11 +35,56 @@ classifiers = [
     ('qda', QuadraticDiscriminantAnalysis(), 'Quadratic Discriminant Analysis')]
 
 def predict(request):
+    fileName=""
+    totFeatures=0
+    numClassification=0
+
+    if request.method == "POST" and request.FILES['test_file']:
+        doIt = True
+
+        # catch all possible errors
+        if request.POST["fileType"] != "csv":
+            messages.error(request, "Currently accepting only csv files.")
+            doIt = False
+
+        if int(float(request.POST["totFeatures"])) <= 0:
+            messages.error(request, "Invalid Element number of features (0 based) in each tuple.")
+            doIt = False
+        else:
+            totFeatures = int(float(request.POST["totFeatures"]))
+
+        if "model" in request.POST:
+            fileName = request.POST['model']+'.model'
+        else:
+            messages.error(request, "No model selected.")
+            doIt = False
+
+
+        if doIt:
+            #test file
+            testfile=str(request.FILES['test_file'])
+            fn = handle_uploaded_file(request.FILES['test_file'], str(request.FILES['test_file']))
+            dataframe = pandas.read_csv(fn)  # , names=names)
+            # dataframes to maximise data for results... n sets and rotate to try different set as test with others as learning input
+            array = dataframe.values
+            X_test = array[:, 0:totFeatures]
+            Y_test = [0] * len(X_test)
+
+            # prepare configuration for cross validation test harness
+            seed = 11
+
+            #model
+            loaded_model = pickle.load(open(mkFullPath(fileName), 'rb'))
+            result = loaded_model.(X_test, Y_test)
+            print(result)
+
+    # set up display
     savedModels=[]
     for file in os.listdir(CONST_UPLOAD_DIR):
         if file.endswith(".model"):
             fileN=os.path.splitext(file)[0]
             elements=fileN.split('^')
+            elements.append(fileN)
             savedModels.append(elements)
             # data_html=data.to_html()
 
@@ -48,7 +93,8 @@ def predict(request):
             #set up display
             effs="<table class='cellpadding'><tr><th>Name</th><th>Model</th><th>Training File</th><th>Efficacy (%)</th><th>Time (ms)</th><th># of Features</th><th>Use</th></tr>"
             for r in savedModels:
-                effs+="<tr><td>"+r[0]+"</td><td>"+r[1]+"</td><td>"+r[2]+"</td><td style='text-align:right;'>"+r[3]+"</td><td style='text-align:right;'>"+r[4]+"</td><td style='text-align:right;'>"+r[5]+"</td><td><input type='radio' id='"+r[0]+r[1]+r[2]+"' name='model' value='Select'/></td></tr>"
+                effs+="<tr><td>"+r[0]+"</td><td>"+r[1]+"</td><td>"+r[2]+"</td><td style='text-align:right;'>"+r[3]+"</td><td style='text-align:right;'>"+r[4]+"</td><td style='text-align:right;'>"+r[5]+\
+                      "</td><td><input type='radio' id='"+r[0]+r[1]+r[2]+"' name='model' value='"+r[6]+"' onclick='updateNumFeatures("+r[5]+")'/></td></tr>"
             effs+="</table>"
 
     return render(request, "app/predict.html",
@@ -118,7 +164,7 @@ def learn(request):
             totFeatures = int(float(request.POST["totFeatures"]))
 
         if int(float(request.POST["numClassification"])) <= 0:
-            messages.error(request, "Invalid Element number of classification (0 based) in each tuple.")
+            messages.error(request, "Invalid Element number of features (0 based) in each tuple.")
             doIt = False
         else:
             numClassification = int(float(request.POST["numClassification"]))
