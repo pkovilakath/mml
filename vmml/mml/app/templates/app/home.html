@@ -80,8 +80,10 @@
             if(ftype=='csv' || ftype=='json'  || ftype=='txt') {
                 $('#' + ftype).prop("checked", true);
                 $('#button-train').prop('disabled', false);
+                $('#divShowHEader').show();
             } else {
                 $('#button-train').prop('disabled', !$("input[name='fileType']:checked").val());
+                $('#divShowHEader').hide();
             }
         });
     });
@@ -204,7 +206,11 @@
                                     </td>
                                     <td>
                                         <span id="file_name" style="font-size:small;">No Training file selected</span>
-                                    </td>
+                                        <div class="btn btn-default" id="divShowHEader" style="width:240px; padding:10px; margin:0; margin-left:20px; font-size:medium;text-align:left; display:none;">
+                                            <input type="checkbox" checked id="useHeader" name="useHeader" value="useHeader"/>
+                                            <label>Training File Has Header</label>
+                                        </div>
+                                   </td>
                                 </tr>
                                 <tr>
                                     <td colspan="2">

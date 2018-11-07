@@ -14,14 +14,16 @@
                 <div class="field has-addons" style="background: rgba(0,0,0,.1);">
                      <table cellspacing="2" cellpadding="2">
                         <tr>
-                            <td>
+                            <td colspan="2">
                                 <div class="upload-btn-wrapper">
                                     <button class="btn btn-default" stye="width:240px;">Upload a Test file</button>
-                                    <input id="test_file" type="file" name="test_file" class="file-input"/>
+                                    <input id="test_file" type="file" name="test_file" class="file-input" style="width:220px;"/>
+                                    <span id="file_name" style="font-size:small;margin-left:20px;">No Test file selected</span>
+                                    <div class="btn btn-default" id="divShowHEader" style="width:240px; padding:10px; margin:0; margin-left:20px; font-size:medium;text-align:left; display:none;">
+                                        <input type="checkbox" checked id="useHeader" name="useHeader" value="useHeader"/>
+                                        <label>Test File Has Header</label>
+                                    </div>
                                 </div>
-                            </td>
-                            <td>
-                                <span id="file_name" style="font-size:small;">No Test file selected</span>
                             </td>
                         </tr>
                         <tr>
@@ -49,7 +51,7 @@
 
                                 </div>
                             </td>
-                        </tr>
+                         </tr>
                         <tr><td colspan="2">
                             <div class="row">
                                 <div class="col-md-12">
@@ -172,8 +174,10 @@
             if(ftype=='csv' || ftype=='json'  || ftype=='txt') {
                 $('#' + ftype).prop("checked", true);
                 $('#button-train').prop('disabled', false);
+                $('#divShowHEader').show();
             } else {
                 $('#button-train').prop('disabled', !$("input[name='fileType']:checked").val());
+                $('#divShowHEader').hide();
             }
         });
     });

@@ -6,6 +6,8 @@ import os
 import pandas
 # import matplotlib.pyplot as plt
 import time
+import pickle
+import numpy as np
 
 from sklearn import model_selection
 # from sklearn.linear_model import LogisticRegression
@@ -18,7 +20,8 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from django.http import JsonResponse
-import pickle
+from sklearn.externals import joblib
+
 
 CONST_UPLOAD_DIR = "upload"
 
@@ -67,16 +70,23 @@ def predict(request):
             dataframe = pandas.read_csv(fn)  # , names=names)
             # dataframes to maximise data for results... n sets and rotate to try different set as test with others as learning input
             array = dataframe.values
-            X_test = array[:, 0:totFeatures]
-            Y_test = [0] * len(X_test)
+            X_pred = array[:, 0:totFeatures]
 
             # prepare configuration for cross validation test harness
             seed = 11
 
-            #model
+            #predict with chosen model
             loaded_model = pickle.load(open(mkFullPath(fileName), 'rb'))
-            result = loaded_model.(X_test, Y_test)
-            print(result)
+            results = loaded_model.predict(X_pred)
+
+            #add reults to original data matrix and save file
+            Y_pred=results.reshape(results.size,1) #transpose
+            results=np.hstack((X_pred,Y_pred)) #add results as a column
+            np.savetxt(mkFullPath("test.csv"), results, delimiter=",", fmt='%f') #save
+
+            #download file
+            df=fileName+".csv"
+            print(Y_pred)
 
     # set up display
     savedModels=[]
@@ -138,6 +148,7 @@ def saveModel(request):
                 userfn=re.sub('[!^$]', '-', userfn)
                 savename=mkFullPath(userfn+'^'+mn+'^'+fileName+'^'+ef+'^'+ti+'^'+str(totFeatures)+'.model')
                 pickle.dump(classifier, open(savename, 'wb'))
+                # joblib.dump(classifier, savename)
 
     return JsonResponse(rData)
 
