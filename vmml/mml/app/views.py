@@ -21,6 +21,8 @@ from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 from django.http import JsonResponse
 from sklearn.externals import joblib
+from django.conf import settings
+from django.http import HttpResponse, Http404
 
 
 CONST_UPLOAD_DIR = "upload"
@@ -41,6 +43,7 @@ def predict(request):
     fileName=""
     totFeatures=0
     numClassification=0
+    hasHeader=('useHeader' in request.POST)
 
     if request.method == "POST" and request.FILES['test_file']:
         doIt = True
@@ -67,7 +70,11 @@ def predict(request):
             #test file
             testfile=str(request.FILES['test_file'])
             fn = handle_uploaded_file(request.FILES['test_file'], str(request.FILES['test_file']))
-            dataframe = pandas.read_csv(fn)  # , names=names)
+            if(hasHeader):
+                dataframe = pandas.read_csv(fn)  # , names=names)
+            else:
+                #no header
+                dataframe = pandas.read_csv(fn, header=None)
             # dataframes to maximise data for results... n sets and rotate to try different set as test with others as learning input
             array = dataframe.values
             X_pred = array[:, 0:totFeatures]
@@ -82,11 +89,12 @@ def predict(request):
             #add reults to original data matrix and save file
             Y_pred=results.reshape(results.size,1) #transpose
             results=np.hstack((X_pred,Y_pred)) #add results as a column
-            np.savetxt(mkFullPath("test.csv"), results, delimiter=",", fmt='%f') #save
 
-            #download file
-            df=fileName+".csv"
-            print(Y_pred)
+            #save and download file
+            filename, file_extension = os.path.splitext(testfile)
+            filename+="-results.csv"
+            np.savetxt(mkFullPath(filename), results, delimiter=",", fmt='%f') #save
+            return download(request,mkFullPath(filename))
 
     # set up display
     savedModels=[]
@@ -125,13 +133,20 @@ def saveModel(request):
     userfn=request.POST["userfn"]
     ef=request.POST["ef"]
     ti=request.POST["ti"]
+    hasHeader=('useHeader' in request.POST)
     classifier=()
+
     if request.method == "POST" and len(userfn)>0 and len(mn)>0 and len(fileName)>0 and totFeatures>0 and numClassification>0:
         doIt = True
         if doIt:
             fileName=fileName
             fn=mkFullPath(fileName)
-            dataframe = pandas.read_csv(fn)  # , names=names)
+            if(hasHeader):
+                dataframe = pandas.read_csv(fn)  # , names=names)
+            else:
+                #no header
+                dataframe = pandas.read_csv(fn, header=None)
+
             array = dataframe.values
             X = array[:, 0:totFeatures]
             Y = array[:, numClassification]
@@ -159,6 +174,7 @@ def learn(request):
     fileName=""
     totFeatures=0
     numClassification=0
+    hasHeader=('useHeader' in request.POST)
 
     if request.method == "POST" and request.FILES['training_file']:
         doIt = True
@@ -183,7 +199,11 @@ def learn(request):
         if doIt:
             fileName=str(request.FILES['training_file'])
             fn = handle_uploaded_file(request.FILES['training_file'], str(request.FILES['training_file']))
-            dataframe = pandas.read_csv(fn)  # , names=names)
+            if(hasHeader):
+                dataframe = pandas.read_csv(fn)  # , names=names)
+            else:
+                #no header
+                dataframe = pandas.read_csv(fn, header=None)
             # dataframes to maximise data for results... n sets and rotate to try different set as test with others as learning input
             array = dataframe.values
             X = array[:, 0:totFeatures]
@@ -265,3 +285,12 @@ def handle_uploaded_file(file, filename):
 
 def mkFullPath(filename):
     return CONST_UPLOAD_DIR+'/' + filename
+
+def download(request, path):
+    file_path = path
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    raise Http404
