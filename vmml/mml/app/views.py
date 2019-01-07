@@ -7,9 +7,11 @@ import pandas
 # import matplotlib.pyplot as plt
 import time
 import pickle
+import sys
 import numpy as np
 
 from sklearn import model_selection
+from sklearn import preprocessing
 # from sklearn.linear_model import LogisticRegression
 # from sklearn.metrics import accuracy_score, log_loss
 from sklearn.neighbors import KNeighborsClassifier
@@ -205,6 +207,21 @@ def learn(request):
                 #no header
                 dataframe = pandas.read_csv(fn, header=None)
             # dataframes to maximise data for results... n sets and rotate to try different set as test with others as learning input
+
+            #encode strings (instead of array = dataframe.values)
+            #categorical encoders
+            for column in dataframe:
+                if(dataframe[column].dtype.kind=="O"): #string or object
+
+                    # 1) label encoder
+                    le = preprocessing.LabelEncoder()
+                    le.fit(dataframe[column])
+                    dataframe[column]=le.transform(dataframe[column])
+
+                    # 2) Hot Encoding - single column -> multiple columns
+
+
+            #properties and results
             array = dataframe.values
             X = array[:, 0:totFeatures]
             Y = array[:, numClassification]
@@ -218,19 +235,24 @@ def learn(request):
             scoring = 'accuracy'
             selectedClassifiers=request.POST.getlist('classifier')
             for name, model, fn in classifiers:
+                print(name)
                 if name in selectedClassifiers:
                     startT = time.time()
                     kfold = model_selection.KFold(n_splits=10, random_state=seed)
-                    cv_results = model_selection.cross_val_score(model, X, Y, cv=kfold, scoring=scoring)
-                    endT = time.time()
-                    results.append((name, model, fn, cv_results.mean(), cv_results.std(), (endT-startT)))
-                    # results.append(cv_results)
-                    # names.append(name)
-                    #avg=cv_results.mean()
+                    try:
+                        cv_results = model_selection.cross_val_score(model, X, Y, cv=kfold, scoring=scoring)
+                        endT = time.time()
+                        results.append((name, model, fn, cv_results.mean(), cv_results.std(), (endT-startT)))
+                        # results.append(cv_results)
+                        # names.append(name)
+                        #avg=cv_results.mean()
 
-                    #some output
-                    # msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
-                    # print(msg)
+                        #some output
+                        # msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+                        # print(msg)
+                    except:
+                        results.append((name, model, fn, 0, 0, 0))
+                        print("Unexpected error - skipped")
 
             #sort by mean & time
             results_eff=results[:]
@@ -243,7 +265,10 @@ def learn(request):
             for r in results_eff:
                 ef='{0:9.2f}'.format(r[3]*100)
                 ti='{0:9.2f}'.format(r[5]*1000)
-                effs.append("<tr><td>"+r[2]+"</td><td style='text-align:right;'>"+ef+"</td><td style='text-align:right;'>"+ti+"</td><td><button onclick='save_model("+'"'+r[2]+'","'+fileName+'",'+str(totFeatures)+','+str(numClassification)+',"'+ef.strip()+'","'+ti.strip()+'")'+"' style='border-radius: 5px;'>Save Model</button></td></tr>")
+                if r[3] <= 0:
+                    effs.append("<tr><td>" + r[2] + "</td><td style='text-align:right;'>" + '' + "</td><td style='text-align:right;'>" + '' + "</td><td style='text-align:center;'>incompatible</td></tr>")
+                else:
+                    effs.append("<tr><td>"+r[2]+"</td><td style='text-align:right;'>"+ef+"</td><td style='text-align:right;'>"+ti+"</td><td><button onclick='save_model("+'"'+r[2]+'","'+fileName+'",'+str(totFeatures)+','+str(numClassification)+',"'+ef.strip()+'","'+ti.strip()+'")'+"' style='border-radius: 5px;'>Save Model</button></td></tr>")
             effs.append("</table>")
 
             # # boxplot algorithm comparison
