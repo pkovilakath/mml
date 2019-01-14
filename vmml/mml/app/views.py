@@ -78,6 +78,23 @@ def predict(request):
                 #no header
                 dataframe = pandas.read_csv(fn, header=None)
             # dataframes to maximise data for results... n sets and rotate to try different set as test with others as learning input
+
+            dataframe2=dataframe.copy()
+
+            #encode strings (instead of array = dataframe.values)
+            #categorical encoders
+            for column in dataframe:
+                if(dataframe[column].dtype.kind=="O"): #string or object
+
+                    # 1) label encoder
+                    le = preprocessing.LabelEncoder()
+                    le.fit(dataframe[column])
+                    dataframe[column]=le.transform(dataframe[column])
+
+                    # 2) Hot Encoding - single column -> multiple columns
+
+
+            #properties and results
             array = dataframe.values
             X_pred = array[:, 0:totFeatures]
 
@@ -88,15 +105,21 @@ def predict(request):
             loaded_model = pickle.load(open(mkFullPath(fileName), 'rb'))
             results = loaded_model.predict(X_pred)
 
-            #add reults to original data matrix and save file
-            Y_pred=results.reshape(results.size,1) #transpose
-            results=np.hstack((X_pred,Y_pred)) #add results as a column
+            #add reults to original data file and save file
+            #if hasHeader:
+                #results=np.insert(results,0,0)
+            #
+            #results=results.reshape(results.size,1) #transpose
+            #results=np.hstack((dataframe2,results)) #add results as a column
+
+            dataframe2['Results'] = pandas.Series(results, index=dataframe2.index) #results added
 
             #save and download file
             filename, file_extension = os.path.splitext(testfile)
             filename+="-results.csv"
-            np.savetxt(mkFullPath(filename), results, delimiter=",", fmt='%f') #save
-            return download(request,mkFullPath(filename))
+            #np.savetxt(mkFullPath(filename), results, delimiter=",", fmt='%s') #save
+            dataframe2.to_csv(mkFullPath(filename), encoding='utf-8', index=False, header=True)
+            return download(request, mkFullPath(filename), filename)
 
     # set up display
     savedModels=[]
@@ -149,6 +172,20 @@ def saveModel(request):
                 #no header
                 dataframe = pandas.read_csv(fn, header=None)
 
+            #encode strings (instead of array = dataframe.values)
+            #categorical encoders
+            for column in dataframe:
+                if(dataframe[column].dtype.kind=="O"): #string or object
+
+                    # 1) label encoder
+                    le = preprocessing.LabelEncoder()
+                    le.fit(dataframe[column])
+                    dataframe[column]=le.transform(dataframe[column])
+
+                    # 2) Hot Encoding - single column -> multiple columns
+
+
+            #properties and results
             array = dataframe.values
             X = array[:, 0:totFeatures]
             Y = array[:, numClassification]
@@ -165,7 +202,7 @@ def saveModel(request):
                 userfn=re.sub('[!^$]', '-', userfn)
                 savename=mkFullPath(userfn+'^'+mn+'^'+fileName+'^'+ef+'^'+ti+'^'+str(totFeatures)+'.model')
                 pickle.dump(classifier, open(savename, 'wb'))
-                # joblib.dump(classifier, savename)
+                # joblib.dump(classifier,savename)
 
     return JsonResponse(rData)
 
@@ -268,7 +305,7 @@ def learn(request):
                 if r[3] <= 0:
                     effs.append("<tr><td>" + r[2] + "</td><td style='text-align:right;'>" + '' + "</td><td style='text-align:right;'>" + '' + "</td><td style='text-align:center;'>incompatible</td></tr>")
                 else:
-                    effs.append("<tr><td>"+r[2]+"</td><td style='text-align:right;'>"+ef+"</td><td style='text-align:right;'>"+ti+"</td><td><button onclick='save_model("+'"'+r[2]+'","'+fileName+'",'+str(totFeatures)+','+str(numClassification)+',"'+ef.strip()+'","'+ti.strip()+'")'+"' style='border-radius: 5px;'>Save Model</button></td></tr>")
+                    effs.append("<tr><td>"+r[2]+"</td><td style='text-align:right;'>"+ef+"</td><td style='text-align:right;'>"+ti+"</td><td><button onclick='save_model("+'"'+r[2]+'","'+fileName+'",'+str(totFeatures)+','+str(numClassification)+',"'+ef.strip()+'","'+ti.strip()+'","'+("true" if hasHeader else "false")+'")'+"' style='border-radius: 5px;'>Save Model</button></td></tr>")
             effs.append("</table>")
 
             # # boxplot algorithm comparison
@@ -289,8 +326,9 @@ def learn(request):
                       'effs': effs,
                       'fileName': fileName,
                       'fn': fileName,
-                      'totFeatures':totFeatures,
+                      'totFeatures': totFeatures,
                       'numClassification': numClassification,
+                      'useHeader': hasHeader
                   })
 
 def effSortFunc(e):
@@ -311,11 +349,15 @@ def handle_uploaded_file(file, filename):
 def mkFullPath(filename):
     return CONST_UPLOAD_DIR+'/' + filename
 
-def download(request, path):
+def download(request, path, filename):
     file_path = path
     if os.path.exists(file_path):
-        with open(file_path, 'rb') as fh:
-            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
-            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
-            return response
+        # with open(file_path, 'rb') as fh:
+        #     response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+        #     response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+        #     return response
+        data = open(path, 'r').read()
+        resp = HttpResponse(data, content_type='application/x-download')
+        resp['Content-Disposition'] = 'attachment;filename=' + filename
+        return resp
     raise Http404

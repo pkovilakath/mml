@@ -88,7 +88,7 @@
         });
     });
 
-    function save_model(mn,fileName,totFeatures,numClassification,ef,ti) {
+    function save_model(mn,fileName,totFeatures,numClassification,ef,ti,hasHeader) {
         let userfn=prompt("Please enter a name","model-name");
         if(userfn==null) return false;
         if(userfn.trim().length<1) {
@@ -108,6 +108,7 @@
                 'ti':ti,
                 'totFeatures':totFeatures,
                 'userfn':userfn,
+                "useHeader":hasHeader,
                  csrfmiddlewaretoken: '{{ csrf_token }}'
             }
         })
